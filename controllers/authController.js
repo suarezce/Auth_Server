@@ -30,7 +30,7 @@ export const handleLogin = async (req, res) => {
                 }
             },
             process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: '30s' }
+            { expiresIn: '2h' }
         );
  
         const refreshToken = jwt.sign(

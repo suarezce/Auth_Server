@@ -8,6 +8,6 @@ router.route('/')
     .delete(/* verifyRoles('user'),  */rolesController.deleteRoles);
 
 router.route('/:rolesList')
-    .get(/* verifyRoles('user'), */ rolesController.getRolesList);
+    .get(rolesController.getRolesList);
 
 export default router;

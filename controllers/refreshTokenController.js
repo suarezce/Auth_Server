@@ -5,9 +5,11 @@ export const handleRefreshToken = async (req, res) => {
 
     const cookies = req.cookies;
 
-    // console.log('Refresh token recibido:', req.cookies.refreshToken);
+    console.log(req.cookies)
 
-   //  console.log("jwt : ", req.Cookie)
+    console.log('Refresh token recibido:', req.cookies.refreshToken);
+
+    console.log("jwt : ", req.Cookie)
 
     if (!cookies.jwt) return res.sendStatus(401);
 
@@ -39,7 +41,7 @@ export const handleRefreshToken = async (req, res) => {
                     }
                 },
                 process.env.ACCESS_TOKEN_SECRET,
-                { expiresIn: '30s' }
+                { expiresIn: '2h' }
             );
             res.json({ roles, accessToken })
             console.log(accessToken)

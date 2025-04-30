@@ -19,22 +19,15 @@ export const deleteRoles = async (req, res) => {
 
 export const getRolesList = async (req, res) => {
 
-   // console.log(req.params)
-
-    console.log("req.roles:" , req.roles)
+ //   console.log("req.roles:" , req.roles)
 
     const rolesArray = req.params.rolesList.split(',')
-
-    console.log("roles :", rolesArray)
-
 
     if (!req?.params?.rolesList) return res.status(400).json({ "message": 'Roles List required' });
     const resultados = await Roles.find(
         { Rol: { $in: rolesArray } },  // Filtro
         { _id: 1 } // Proyección (solo devuelve el _id)
     );
-
-   // console.log(resultados)
 
     const roles = resultados.map(doc => doc._id.toString())
 
