@@ -8,14 +8,12 @@ export const credentials = (req, res, next) => {
     if (allowedOrigins.includes(origin)) {
         res.header('Access-Control-Allow-Credentials', true);
 
-
-        
-        // Convertir a string para el log    
+       // Convertir a string para el log    
         
         const headers = res.getHeaders();
         const headersString = JSON.stringify(headers, null, 2);
 
-//        console.log('Headers de la respuesta:', headersString);
+        console.log('Headers de la respuesta:', headersString);
         
     }
     next();

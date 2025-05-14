@@ -8,11 +8,11 @@ export const handleLogin = async (req, res) => {
 
     const foundUser = await User.findOne({ username: user }).populate("roles");
 
-    console.log("foundUser :", foundUser)
+    //console.log("foundUser :", foundUser)
 
     const tokenRoles = foundUser?.roles.map(doc => doc.Rol)
 
-    console.log("tokenRoles :", tokenRoles)
+    //console.log("tokenRoles :", tokenRoles)
 
     if (!foundUser) return res.sendStatus(401); //Unauthorized 
 
@@ -30,7 +30,7 @@ export const handleLogin = async (req, res) => {
                 }
             },
             process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: '2h' }
+            { expiresIn: '10s' }
         );
  
         const refreshToken = jwt.sign(
@@ -41,14 +41,14 @@ export const handleLogin = async (req, res) => {
         // Saving refreshToken with current user
         foundUser.refreshToken = refreshToken;
         const result = await foundUser.save();
-        console.log("foundToken :",foundUser);
+        console.log("foundToken :", foundUser);
     //    console.log(roles);
 
         // Creates Secure Cookie with refresh token
-        res.cookie('jwt', refreshToken, { httpOnly: true, sameSite: 'None', maxAge: 24 * 60 * 60 * 1000 });   //  secure: true, 
+        res.cookie('jwt', refreshToken, { httpOnly: true, secure: false, sameSite: 'Lax', maxAge: 24 * 60 * 60 * 1000 });   //  
 
         // Send authorization roles and access token to user
-        res.json({ roles, accessToken });
+        res.json({user,  roles, accessToken });
 
     } else {
         res.sendStatus(401);
