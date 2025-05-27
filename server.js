@@ -54,7 +54,7 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(cors(corsOptions));
+app.use(cors(corsOptions));  // 
 
 // built-in middleware to handle urlencoded form data
 app.use(express.urlencoded({ extended: false }));

@@ -15,7 +15,7 @@ import {allowedOrigins} from './allowedOrigins.js';
 
 export const corsOptions = {
     origin: (origin, callback) => {
-        console.log("Origen recibido:", origin); // 🔼 Depuración
+        console.log("Origen recibido en Auth:", origin); // 🔼 Depuración
         if (allowedOrigins.includes(origin)) { // ❌ Quita || !origin
             callback(null, true);
         } else {
