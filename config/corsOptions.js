@@ -1,22 +1,10 @@
 import {allowedOrigins} from './allowedOrigins.js';
 
-/* export const corsOptions = {
-    origin: (origin, callback) => {
-        if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-            callback(null, true)
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    optionsSuccessStatus: 200,
-    credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization'] 
-} */
 
 export const corsOptions = {
     origin: (origin, callback) => {
-        console.log("Origen recibido en Auth:", origin); // 🔼 Depuración
-        if (allowedOrigins.includes(origin)) { // ❌ Quita || !origin
+        // Permite solicitudes sin 'Origin' (same-origin) o desde orígenes permitidos
+        if (!origin || allowedOrigins.includes(origin)) { // ✅ ¡Corrección clave!
             callback(null, true);
         } else {
             callback(new Error('Not allowed by CORS'));
@@ -27,8 +15,7 @@ export const corsOptions = {
     allowedHeaders: [
         'Content-Type', 
         'Authorization', 
-        'Cache-Control', // Agregar esto
-        'Pragma'         // Y esto si realmente lo necesitas
+        'Cache-Control'
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE'] 
 };
