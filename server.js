@@ -29,7 +29,7 @@ createRoles()
 
 const app = express();
 
-const PORT = process.env.PORT || 4500;
+const PORT = process.env.AUTH_PORT || 3800;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
