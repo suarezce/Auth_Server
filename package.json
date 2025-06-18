@@ -5,8 +5,13 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon --trace-deprecation server.js"
+  "build": "babel src --out-dir build && npm run copy-views && npm run copy-env && npm run copy-public && npm run copy-config",
+  "copy-views": "xcopy /E /I views build\\views",
+  "copy-env": "copy .env build\\.env",
+  "copy-public": "xcopy /E /I public build\\public",
+  "copy-config": "xcopy config build\\config /E /I",
+  "start": "node build/server.js",
+  "dev": "nodemon --trace-deprecation src/server.js"
   },
   "author": "Dave Gray",
   "license": "ISC",
@@ -22,9 +27,13 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@babel/cli": "^7.27.2",
     "@babel/core": "^7.26.10",
     "@babel/node": "^7.26.0",
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@babel/plugin-transform-runtime": "^7.27.4",
     "@babel/preset-env": "^7.26.9",
+    "core-js": "^3.43.0",
     "nodemon": "^3.1.7"
   }
 }

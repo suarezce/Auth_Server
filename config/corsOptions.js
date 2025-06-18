@@ -5,6 +5,7 @@ export const corsOptions = {
     origin: (origin, callback) => {
         // Permite solicitudes sin 'Origin' (same-origin) o desde orígenes permitidos
         if (!origin || allowedOrigins.includes(origin)) { // ✅ ¡Corrección clave!
+            console.log(origin)
             callback(null, true);
         } else {
             callback(new Error('Not allowed by CORS'));
@@ -17,5 +18,5 @@ export const corsOptions = {
         'Authorization', 
         'Cache-Control'
     ],
-    methods: ['GET', 'POST', 'PUT', 'DELETE'] 
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'] 
 };
