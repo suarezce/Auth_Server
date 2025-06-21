@@ -70,7 +70,7 @@ const setupMiddleware = () => {
     next();
   });
   
-  app.use(cors(corsOptions));
+  app.use(cors(corsOptions));   // 
   
   // Parsers
   app.use(express.urlencoded({ extended: false }));
@@ -120,7 +120,7 @@ const setupRoutes = () => {
 const startServer = () => {
   app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
-    console.log(`🌐 Access at: http://localhost:${PORT}`);
+    console.log(`🌐 Access at ${PORT}`);
   });
 };
 
