@@ -31,6 +31,7 @@ import rolesRouter from '../routes/api/roles.js';
 // Configuración inicial
 const app = express();
 const PORT = process.env.AUTH_PORT || 3800;
+const HOST = process.env.AUTH_HOST || 'localhost';
 
 // Obtener __dirname en módulos ES
 const __filename = fileURLToPath(import.meta.url);
@@ -44,11 +45,10 @@ const __dirname = path.dirname(__filename);
 const initializeDatabase = async () => {
   try {
     await connectDB();
-    console.log('✅ Connected to MongoDB');
     
     // Crear roles después de conectar a la DB
     await createRoles();
-    console.log('✅ Initial roles created');
+    
   } catch (error) {
     console.error('❌ Database initialization failed:', error);
     process.exit(1);
@@ -78,7 +78,7 @@ const setupMiddleware = () => {
   app.use(cookieParser());
   
   // Archivos estáticos
-  console.log(path.join(__dirname, '../public'))
+  //console.log(path.join(__dirname, '../public'))
   app.use(express.static(path.join(__dirname, '../public')));
 };
 
@@ -118,9 +118,9 @@ const setupRoutes = () => {
 
 // 4. Iniciar servidor
 const startServer = () => {
-  app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-    console.log(`🌐 Access at ${PORT}`);
+  app.listen(PORT, HOST, () => {
+    console.log(`🚀 Server running on port ${HOST} ${PORT}`);
+    console.log(`🌐 Access at http://${HOST}:${PORT}`);
   });
 };
 

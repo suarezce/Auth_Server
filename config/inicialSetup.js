@@ -21,6 +21,7 @@ export const createRoles = async () => {
         ])
 
         console.log({ values })
+        console.log('✅ Initial roles created');
 
     } catch (error) {
         console.error(error)
