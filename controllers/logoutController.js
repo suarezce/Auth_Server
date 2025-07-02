@@ -4,27 +4,32 @@ export const handleLogout = async (req, res) => {
     // On client, also delete the accessToken
 
     const cookies = req.cookies;
-    console.log(req.cookies)
-
-    if (!cookies?.jwt) return res.sendStatus(204); //No content
-    const refreshToken = cookies.jwt;
-
-    // Is refreshToken in db?
-    const foundUser = await User.findOne({ refreshToken }).exec();
-    if (!foundUser) {
-        res.clearCookie('jwt', { httpOnly: true, sameSite: 'None' }); //, secure: true
-        return res.status(202).json({ 'message': 'User Logout!.' })
+    if (!cookies?.jwt) {
+        return res.sendStatus(204); // No content
     }
 
-    // Delete refreshToken in db
-    foundUser.refreshToken = '';
-    const result = await foundUser.save();
-    console.log(result);
+    const refreshToken = cookies.jwt;
 
-    res.clearCookie('jwt', { httpOnly: true, sameSite: 'None' }); //, secure: true
-    res.status(202).json({ 'message': 'User Logout!.' });
+    try {
+        // Is refreshToken in db?
+        const foundUser = await User.findOne({ refreshToken }).exec();
+        if (!foundUser) {
+            res.clearCookie('jwt', { httpOnly: true, sameSite: 'None' }); // secure: true
+            return res.status(202).json({ message: 'Usuario Logout!' });
+        }
 
-}
+        // Delete refreshToken in db
+        foundUser.refreshToken = '';
+        const result = await foundUser.save();
+        console.log(result);
 
-const  logoutController = {handleLogout}
-export default logoutController
+        res.clearCookie('jwt', { httpOnly: true, sameSite: 'None' }); // secure: true
+        res.status(202).json({ message: 'Usuario Logout!' });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Internal Server Error logout' });
+    }
+};
+
+const logoutController = { handleLogout };
+export default logoutController;

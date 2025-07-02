@@ -62,14 +62,6 @@ const setupMiddleware = () => {
   app.use(credentials); // Antes de CORS
   
   // Configuración CORS
-  app.use((req, res, next) => {
-    res.header(
-      "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept, Authorization, Cache-Control, Pragma"
-    );
-    next();
-  });
-  
   app.use(cors(corsOptions));   // 
   
   // Parsers
@@ -79,7 +71,7 @@ const setupMiddleware = () => {
   
   // Archivos estáticos
   //console.log(path.join(__dirname, '../public'))
-  app.use(express.static(path.join(__dirname, '../public')));
+  app.use(express.static(path.join(__dirname, '../views')));
 };
 
 // 3. Configuración de rutas

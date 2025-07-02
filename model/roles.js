@@ -1,14 +1,16 @@
-import {Schema, model} from 'mongoose';
+import { Schema, model } from 'mongoose';
 // const Schema = mongoose.Schema;
 
 const rolSchema = new Schema({
-    Rol : {
-        type : String,
-        required : true
+    Rol: {
+        type: String,
+        required: true
     },
-    Admin : Number,
-    Editor : Number,
-    Consultor : Number 
+    descripcion: String,
+    Admin: Number,
+    Editor: Number,
+    Consultor: Number
+
 
 });
 

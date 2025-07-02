@@ -1,13 +1,17 @@
 import express from 'express';
 const router = express.Router();
 import usersController from '../../controllers/usersController.js';
-import {verifyRoles} from '../../middleware/verifyRoles.js';
+import { verifyRoles } from '../../middleware/verifyRoles.js';
 
+// Rutas para obtener todos los usuarios y eliminar un usuario por ID
 router.route('/')
-    .get(verifyRoles('user') , usersController.getAllUsers)
-    .delete(verifyRoles('user'), usersController.deleteUser);
+    .get(verifyRoles('superAdmin'), usersController.getAllUsers)
 
+
+// Rutas para obtener un usuario por ID y actualizar un usuario por ID
 router.route('/:id')
-    .get(verifyRoles('user'), usersController.getUser);
+    .get(verifyRoles('superAdmin'), usersController.getUser)
+    .patch(verifyRoles('superAdmin'), usersController.updateUser) // Nueva ruta para actualizar un usuario
+    .delete(verifyRoles('superAdmin'), usersController.deleteUser); // Borrar usuario por id
 
 export default router;

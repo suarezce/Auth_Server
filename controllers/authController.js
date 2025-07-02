@@ -4,56 +4,56 @@ import jwt from 'jsonwebtoken';
 
 export const handleLogin = async (req, res) => {
     const { user, pwd } = req.body;
-    if (!user || !pwd) return res.status(400).json({ 'message': 'Username and password are required.' });
+    if (!user || !pwd) {
+        return res.status(400).json({ message: 'Username y password son requeridos.' });
+    }
 
-    const foundUser = await User.findOne({ username: user }).populate("roles");
+    try {
+        const foundUser = await User.findOne({ username: user }).populate("roles");
 
-    //console.log("foundUser :", foundUser)
+        if (!foundUser) {
+            return res.status(401).json({ message: 'Sin autorización' });
+        }
 
-    const tokenRoles = foundUser?.roles.map(doc => doc.Rol)
+        const match = await bcrypt.compare(pwd, foundUser.password);
+        if (!match) {
+            return res.status(401).json({ message: 'Sin autorización' });
+        }
 
-    //console.log("tokenRoles :", tokenRoles)
-
-    if (!foundUser) return res.sendStatus(401); //Unauthorized 
-
-    // evaluate password 
-    const match = await bcrypt.compare(pwd, foundUser.password);
-    if (match) {
-        const roles = foundUser?.roles.map(doc => doc.Rol)
-        // create JWTs
+        const roles = foundUser.roles.map(doc => doc.Rol);
 
         const accessToken = jwt.sign(
-            {
-                "UserInfo": {
-                    "username": foundUser.username,
-                    "roles": roles
-                }
-            },
+            { UserInfo: { username: foundUser.username, roles } },
             process.env.ACCESS_TOKEN_SECRET,
             { expiresIn: '1h' }
         );
- 
+
         const refreshToken = jwt.sign(
-            { "username": foundUser.username },
+            { username: foundUser.username },
             process.env.REFRESH_TOKEN_SECRET,
             { expiresIn: '1d' }
         );
-        // Saving refreshToken with current user
+
         foundUser.refreshToken = refreshToken;
-        const result = await foundUser.save();
-        console.log("foundToken :", foundUser);
-    //    console.log(roles);
+        await foundUser.save();
 
-        // Creates Secure Cookie with refresh token
-        res.cookie('jwt', refreshToken, { httpOnly: true, sameSite: 'Lax', maxAge: 24 * 60 * 60 * 1000 });   //   secure: false,
+/*         res.cookie('jwt', refreshToken, { httpOnly: true, sameSite: 'Lax', maxAge: 24 * 60 * 60 * 1000 }); */
 
-        // Send authorization roles and access token to user
-        res.json({user,  roles, accessToken });
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            sameSite: 'Lax',
+            maxAge: 24 * 60 * 60 * 1000 ,
+            secure: process.env.NODE_ENV === 'production' // Solo en producción
+        });
 
-    } else {
-        res.sendStatus(401);
+
+
+        res.json({ user: foundUser.username, roles, accessToken });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Internal Server Error auth' });
     }
-}
+};
 
-const authController = {handleLogin}
-export default authController
+const authController = { handleLogin };
+export default authController;

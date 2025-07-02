@@ -1,4 +1,4 @@
-import {Schema, model, trusted} from 'mongoose';
+import { Schema, model, trusted } from 'mongoose';
 // const Schema = mongoose.Schema;
 
 const employeeSchema = new Schema({
@@ -10,12 +10,31 @@ const employeeSchema = new Schema({
         type: String,
         required: true
     },
+    direccion: {
+        type: String,
+        required: true
+    },
+    fechanac: {
+        type: Date,
+        required: true
+    },
+    username: {
+        type: String,
+        required: true
+    },
     email: {
-        type : String,
-        required : true
+        type: String,
+        required: true
+    },
+    fechaing:{
+        type: String,
+        required: true
     },
     cargo: {
-        type : String
+        type: String
+    },
+    imagen: {
+        type: String
     }
 });
 

@@ -4,10 +4,10 @@ import rolesController from '../../controllers/rolesControllers.js';
 import {verifyRoles} from '../../middleware/verifyRoles.js';
 
 router.route('/')
-    .get(/* verifyRoles('user') ,  */ rolesController.getAllRoles)
-    .delete(/* verifyRoles('user'),  */rolesController.deleteRoles);
+    .get(verifyRoles('superAdmin'),  rolesController.getAllRoles)
+    .delete(verifyRoles('superAdmin'), rolesController.deleteRoles);
 
 router.route('/:rolesList')
-    .get(rolesController.getRolesList);
+    .get(verifyRoles('superAdmin'), rolesController.getRolesList);
 
 export default router;

@@ -1,22 +1,18 @@
-// Verificación de Roles
-
 export const verifyRoles = (...allowedRoles) => {
-
-
     return (req, res, next) => {
+        // Verificar si el usuario tiene roles asignados
+        if (!req?.roles) {
+            return res.status(401).json({ error: 'Sin Autorización: No tiene roles asignados' });
+        }
 
-        console.log("roles del usuario :", req.roles )
+        // Verificar si el usuario tiene al menos uno de los roles permitidos
+        const hasRole = req.roles.some(role => allowedRoles.includes(role));
 
-        if (!req?.roles) return res.status(401).json('no tiene roles asignado');
+        if (!hasRole) {
+            return res.status(403).json({ error: 'Sin privilegios para esta operación' });
+        }
 
-        const rolesArray = [...allowedRoles];
-
-        const result = req.roles.map(role => rolesArray.includes(role)).find(val => val === true);
-
-        if (!result) return res.status(403).json("sin privilegios");
-        
+        // Continuar con el siguiente middleware
         next();
-        
-    }
-
-}
+    };
+};

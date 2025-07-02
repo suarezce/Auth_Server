@@ -4,48 +4,58 @@ import bcrypt from 'bcryptjs';
 
 export const handleNewUser = async (req, res) => {
     const { username, password, rolesName } = req.body;
-    if (!username || !password) return res.status(400).json({ 'message': 'Username and password are required.' });
+    if (!username || !password) {
+        return res.status(400).json({ message: 'Username y password son requeridos.' });
+    }
 
-    // check for duplicate usernames in the db
-    const duplicate = await User.findOne({ username: username }).exec();
-    if (duplicate) return res.sendStatus(409); //Conflict 
+    try {
+        // Check for duplicate usernames in the db
+        const duplicate = await User.findOne({ username }).exec();
+        if (duplicate) {
+            return res.status(409).json({ message: 'Ya existe un usuario con ese username' });
+        }
 
-/*     try { */
-        //encrypt the password
-       // const hashedPwd = await bcrypt.hash(pwd, 10);
+        // Encrypt the password
+        const hashedPwd = await bcrypt.hash(password, 10);
 
-        //create and store the new user
+        // Create and store the new user
         const nUser = new User({
             username,
-            password: await User.encriptPassword(password)
+            password: hashedPwd
         });
 
         if (rolesName) {
             const foundRoles = await Roles.find({ Rol: { $in: rolesName } });
-            nUser.roles = foundRoles.map(rol => rol._id)
-
-            console.log(nUser.roles)
-        }
-        else {
-            const rol = await Roles.findOne({ Rol: "User" });
-        
-            nUser.roles = [rol._id]
-            console.log(rol._id)
+            nUser.roles = foundRoles.map(rol => rol._id);
+        } else {
+            const rol = await Roles.findOne({ Rol: "user" });
+            nUser.roles = [rol._id];
         }
 
         const result = await nUser.save();
-
         console.log(result);
 
-        res.status(201).json({ 'success': `New user ${nUser.username} created!` });
-        
-/*     } catch (err) {
-        res.status(500).json({ 'message': err.message });
-    } */
-}
+        res.status(201).json({ success: `Nuevo usuario ${nUser.username} creado!` });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Internal Server Error register' });
+    }
+};
 
-const registerController = { handleNewUser }
+export const updateUser = async (req, res) => {
+    if (!req?.body?.id) {
+        return res.status(400).json({ 'message': 'ID parameter is required.' });
+    }
 
-export default registerController; 
+    const user = await User.findOne({ _id: req.body.id }).exec();
+    if (!user) {
+        return res.status(204).json({ "message": `No employee matches ID ${req.body.id}.` });
+    }
+    if (req.body?.firstname) user.firstname = req.body.firstname;
+    if (req.body?.lastname) user.lastname = req.body.lastname;
+    const result = await user.save();
+    res.json(result);
+};
 
-
+const registerController = { handleNewUser, updateUser };
+export default registerController;

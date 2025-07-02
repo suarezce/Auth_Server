@@ -1,9 +1,8 @@
 import { format } from 'date-fns';
 import { v4 as uuid } from 'uuid';
-
 import fs from 'fs';
 import fsPromises from 'fs/promises';
-import path from 'path' 
+import path from 'path';
 
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
@@ -20,14 +19,15 @@ export const logEvents = async (message, logName) => {
 
         await fsPromises.appendFile(path.join(__dirname, '..', 'logs', logName), logItem);
     } catch (err) {
-        console.log(err);
+        console.error('Error writing to log file:', err);
+        // Consider writing the error to a separate error log file
+        await fsPromises.appendFile(path.join(__dirname, '..', 'logs', 'errorLog.txt'), `Error: ${err.message}\n`);
     }
-}
+};
 
 export const logger = (req, res, next) => {
     logEvents(`${req.method}\t${req.headers.origin}\t${req.url}`, 'reqLog.txt');
     console.log(`${req.method} ${req.path}`);
     next();
-}
-
+};
 
