@@ -5,20 +5,20 @@ import bcrypt from 'bcryptjs';
 export const handleNewUser = async (req, res) => {
     const { username, password, rolesName } = req.body;
     if (!username || !password) {
-        return res.status(400).json({ message: 'Username y password son requeridos.' });
+        return res.status(400).json({ message: 'El username y la contraseña son requeridos.' });
     }
 
     try {
-        // Check for duplicate usernames in the db
+        // Verificar si ya existe un usuario con el mismo username en la base de datos
         const duplicate = await User.findOne({ username }).exec();
         if (duplicate) {
-            return res.status(409).json({ message: 'Ya existe un usuario con ese username' });
+            return res.status(409).json({ message: 'Ya existe un usuario con ese username.' });
         }
 
-        // Encrypt the password
+        // Encriptar la contraseña
         const hashedPwd = await bcrypt.hash(password, 10);
 
-        // Create and store the new user
+        // Crear y guardar el nuevo usuario
         const nUser = new User({
             username,
             password: hashedPwd
@@ -35,27 +35,65 @@ export const handleNewUser = async (req, res) => {
         const result = await nUser.save();
         console.log(result);
 
-        res.status(201).json({ success: `Nuevo usuario ${nUser.username} creado!` });
+        res.status(201).json({ success: `Nuevo usuario ${nUser.username} creado exitosamente!` });
     } catch (err) {
         console.error(err);
-        return res.status(500).json({ message: 'Internal Server Error register' });
+        return res.status(500).json({ message: 'Error interno del servidor al registrar' });
     }
 };
 
-export const updateUser = async (req, res) => {
-    if (!req?.body?.id) {
-        return res.status(400).json({ 'message': 'ID parameter is required.' });
+export const changePassword = async (req, res) => {
+    const { userId, oldPassword, newPassword } = req.body;
+    if (!userId || !oldPassword || !newPassword) {
+        return res.status(400).json({ message: 'Se requieren User ID, contraseña actual y nueva contraseña.' });
     }
 
-    const user = await User.findOne({ _id: req.body.id }).exec();
-    if (!user) {
-        return res.status(204).json({ "message": `No employee matches ID ${req.body.id}.` });
+    try {
+        const foundUser = await User.findById(userId);
+
+        if (!foundUser) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+
+        const match = await bcrypt.compare(oldPassword, foundUser.password);
+        if (!match) {
+            return res.status(401).json({ message: 'La contraseña actual es incorrecta' });
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        foundUser.password = hashedPassword;
+        await foundUser.save();
+
+        res.json({ message: 'Contraseña cambiada exitosamente' });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Error interno del servidor' });
     }
-    if (req.body?.firstname) user.firstname = req.body.firstname;
-    if (req.body?.lastname) user.lastname = req.body.lastname;
-    const result = await user.save();
-    res.json(result);
 };
 
-const registerController = { handleNewUser, updateUser };
+export const resetPassword = async (req, res) => {
+    const { username, newPassword } = req.body;
+    if (!username || !newPassword) {
+        return res.status(400).json({ message: 'Se requieren username y nueva contraseña.' });
+    }
+
+    try {
+        const foundUser = await User.findOne({ username });
+
+        if (!foundUser) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        foundUser.password = hashedPassword;
+        await foundUser.save();
+
+        res.json({ message: 'Contraseña restablecida exitosamente' });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Error interno del servidor' });
+    }
+};
+
+const registerController = { handleNewUser, changePassword, resetPassword };
 export default registerController;
