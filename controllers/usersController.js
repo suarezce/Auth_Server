@@ -1,45 +1,90 @@
+import mongoose from 'mongoose';
 import User from '../model/user.js';
 
 export const getAllUsers = async (req, res) => {
-    const users = await User.find().populate("roles");
-    if (!users) return res.status(204).json({ 'message': 'No users found' });
-    res.json(users);
+    try {
+        const users = await User.find().populate("roles");
+        if (!users) return res.status(204).json({ 'message': 'No users found' });
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 };
 
 export const deleteUser = async (req, res) => {
-    if (!req?.params?.id) return res.status(400).json({ "message": 'User ID required' });
-    const user = await User.findOne({ _id: req.params.id }).exec();
-    if (!user) {
-        return res.status(204).json({ 'message': `ID de Usuario ${req.params.id} no encontrado` });
+    const { id } = req.params;
+
+    // Validar que el ID sea un ObjectId válido
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ message: 'User ID is not valid' });
     }
-    const result = await user.deleteOne({ _id: req.params.id });
-    res.json(result);
+
+    try {
+        const user = await User.findById(id).exec();
+        if (!user) {
+            return res.status(404).json({ 'message': `User ID ${id} not found` });
+        }
+
+        const result = await User.deleteOne({ _id: id });
+        res.json(result);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 };
 
 export const getUser = async (req, res) => {
-    if (!req?.params?.id) return res.status(400).json({ "message": 'User ID required' });
-    const user = await User.findOne({ _id: req.params.id }).exec();
-    if (!user) {
-        return res.status(204).json({ 'message': `User ID ${req.params.id} not found` });
+    const { id } = req.params;
+
+    // Validar que el ID sea un ObjectId válido
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ message: 'User ID is not valid' });
     }
-    res.json(user);
+
+    try {
+        const user = await User.findById(id).populate("roles").exec();
+        if (!user) {
+            return res.status(404).json({ 'message': `User ID ${id} not found` });
+        }
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 };
 
 export const updateUser = async (req, res) => {
-    if (!req?.params?.id) return res.status(400).json({ "message": 'User ID required' });
-    const { username, roles } = req.body;
-    if (!username && !roles) return res.status(400).json({ "message": 'Username or roles required' });
+    const { id } = req.params;
+    const updateData = req.body;
 
-    const user = await User.findById(req.params.id).exec();
-    if (!user) {
-        return res.status(204).json({ 'message': `User ID ${req.params.id} not found` });
+    // Validar que el ID sea un ObjectId válido
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ message: 'User ID is not valid' });
     }
 
-    if (username) user.username = username;
-    if (roles) user.roles = roles;
+    try {
+        const updatedUser = await User.findByIdAndUpdate(
+            id,
+            { $set: updateData },  // Actualiza solo los campos enviados
+            { 
+                new: true, 
+                runValidators: true,
+                context: 'query'  // Necesario para validar solo campos actualizados
+            }
+        );
 
-    const updatedUser = await user.save();
-    res.json(updatedUser);
+        if (!updatedUser) {
+            return res.status(404).json({ 'message': `User ID ${id} not found` });
+        }
+
+        res.json(updatedUser);
+    } catch (error) {
+        // Manejar errores de validación de esquema específicos
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({ message: error.message });
+        }
+
+        // Manejar otros errores genéricos
+        res.status(500).json({ message: error.message });
+    }
 };
 
 const usersController = {

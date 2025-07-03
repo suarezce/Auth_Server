@@ -5,12 +5,13 @@ import employeesController from '../../controllers/employeesController.js';
 import {verifyRoles} from '../../middleware/verifyRoles.js';
 
 router.route('/')
-    .get(verifyRoles('superAdmin'), employeesController.getAllEmployees)
-    .post(verifyRoles('superAdmin'), employeesController.createNewEmployee)
-    .put(verifyRoles('superAdmin'), employeesController.updateEmployee)
-    .delete(verifyRoles('superAdmin'), employeesController.deleteEmployee);
+    .get(verifyRoles('loginAdmin', 'user'), employeesController.getAllEmployees)
+    .post(verifyRoles('loginAdmin'), employeesController.createNewEmployee)
+
+
 
 router.route('/:id')
-    .get(verifyRoles('superAdmin'), employeesController.getEmployee);
-
+    .get(verifyRoles('loginAdmin'), employeesController.getEmployee)
+    .patch(verifyRoles('loginAdmin'), employeesController.updateEmployee)
+    .delete(verifyRoles('loginAdmin'), employeesController.deleteEmployee);
 export default router;

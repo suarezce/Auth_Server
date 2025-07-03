@@ -5,13 +5,13 @@ import { verifyRoles } from '../../middleware/verifyRoles.js';
 
 // Rutas para obtener todos los usuarios y eliminar un usuario por ID
 router.route('/')
-    .get(verifyRoles('superAdmin'), usersController.getAllUsers)
+    .get(verifyRoles('loginAdmin'), usersController.getAllUsers)
 
 
 // Rutas para obtener un usuario por ID y actualizar un usuario por ID
 router.route('/:id')
-    .get(verifyRoles('superAdmin'), usersController.getUser)
-    .patch(verifyRoles('superAdmin'), usersController.updateUser) // Nueva ruta para actualizar un usuario
-    .delete(verifyRoles('superAdmin'), usersController.deleteUser); // Borrar usuario por id
+    .get(verifyRoles('loginAdmin'), usersController.getUser)
+    .patch(verifyRoles('loginAdmin'), usersController.updateUser) // Nueva ruta para actualizar un usuario
+    .delete(verifyRoles('loginAdmin'), usersController.deleteUser); // Borrar usuario por id
 
 export default router;

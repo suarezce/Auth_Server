@@ -4,8 +4,8 @@ import registerController from '../controllers/registerController.js';
 import { verifyRoles } from '../middleware/verifyRoles.js';
 
 
-router.post('/', verifyRoles('superAdmin'),  registerController.handleNewUser);
-router.post('/resetPassword', verifyRoles('superAdmin'), registerController.resetPassword )
+router.post('/', verifyRoles('loginAdmin'),  registerController.handleNewUser);
+router.post('/resetPassword', verifyRoles('loginAdmin'), registerController.resetPassword )
 
 
 export default router;

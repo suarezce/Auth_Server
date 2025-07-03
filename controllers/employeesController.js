@@ -1,67 +1,117 @@
+import mongoose from 'mongoose';
 import Employee from '../model/employee.js';
 
 export const getAllEmployees = async (req, res) => {
-    const employees = await Employee.find();
-    if (!employees) return res.status(204).json({ 'message': 'No employees found.' });
-    res.json(employees);
-}
+    try {
+        const employees = await Employee.find();
+        if (!employees) return res.status(204).json({ 'message': 'No employees found.' });
+        res.json(employees);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
 
 export const createNewEmployee = async (req, res) => {
-    if (!req?.body?.firstname || !req?.body?.lastname || req?.body.email) {
-        return res.status(400).json({ 'message': 'First, last names and email are required' });
+    const { firstname, lastname, email, direccion, fechanac, username, fechaing, cargo, imagen } = req.body;
+
+    // Validar que se hayan proporcionado los campos necesarios
+    if (!firstname || !lastname || !email || !direccion || !fechanac || !username || !fechaing) {
+        return res.status(400).json({ "message": 'All fields are required' });
     }
 
     try {
-        const result = await Employee.create({
-            firstname: req.body.firstname,
-            lastname: req.body.lastname,
-            email: req.body.email,
-            cargo: req.body.cargo
+        const newEmployee = new Employee({
+            firstname,
+            lastname,
+            email,
+            direccion,
+            fechanac,
+            username,
+            fechaing,
+            cargo,
+            imagen
         });
-
-        res.status(201).json(result);
-
-    } catch (err) {
-        console.error(err);
+        const savedEmployee = await newEmployee.save();
+        res.status(201).json(savedEmployee);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
-}
+};
 
 export const updateEmployee = async (req, res) => {
-    if (!req?.body?.id) {
-        return res.status(400).json({ 'message': 'ID parameter is required.' });
+    const { id } = req.params; // Obtener el ID del empleado desde los parámetros de la ruta
+    const updateData = req.body;
+
+    // Validar que el ID sea un ObjectId válido
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ message: 'Employee ID is not valid' });
     }
 
-    const employee = await Employee.findOne({ _id: req.body.id }).exec();
-    if (!employee) {
-        return res.status(204).json({ "message": `No employee matches ID ${req.body.id}.` });
+    try {
+        const updatedEmployee = await Employee.findByIdAndUpdate(
+            id,
+            { $set: updateData },  // Actualiza solo los campos enviados
+            { 
+                new: true, 
+                runValidators: true,
+                context: 'query'  // Necesario para validar solo campos actualizados
+            }
+        );
+
+        if (!updatedEmployee) {
+            return res.status(404).json({ 'message': `Employee ID ${id} not found` });
+        }
+
+        res.json(updatedEmployee);
+    } catch (error) {
+        // Manejar errores de validación de esquema específicos
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({ message: error.message });
+        }
+
+        // Manejar otros errores genéricos
+        res.status(500).json({ message: error.message });
     }
-    if (req.body?.firstname) employee.firstname = req.body.firstname;
-    if (req.body?.lastname) employee.lastname = req.body.lastname;
-    const result = await employee.save();
-    res.json(result);
-}
+};
 
 export const deleteEmployee = async (req, res) => {
-    if (!req?.body?.id) return res.status(400).json({ 'message': 'Employee ID required.' });
+    const { id } = req.params; // Obtener el ID del empleado desde los parámetros de la ruta
 
-    const employee = await Employee.findOne({ _id: req.body.id }).exec();
-    if (!employee) {
-        return res.status(204).json({ "message": `No employee matches ID ${req.body.id}.` });
+    // Validar que el ID sea un ObjectId válido
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ message: 'Employee ID is not valid' });
     }
-    const result = await employee.deleteOne(); //{ _id: req.body.id }
-    res.json(result);
-}
+
+    try {
+        const employee = await Employee.findById(id).exec();
+        if (!employee) {
+            return res.status(404).json({ 'message': `Employee ID ${id} not found` });
+        }
+        const result = await Employee.deleteOne({ _id: id });
+        res.json(result);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
 
 export const getEmployee = async (req, res) => {
-    if (!req?.params?.id) return res.status(400).json({ 'message': 'Employee ID required.' });
+    const { id } = req.params; // Obtener el ID del empleado desde los parámetros de la ruta
 
-    const employee = await Employee.findOne({ _id: req.params.id }).exec();
-    if (!employee) {
-        return res.status(204).json({ "message": `No employee matches ID ${req.params.id}.` });
+    // Validar que el ID sea un ObjectId válido
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ message: 'Employee ID is not valid' });
     }
-    res.json(employee);
-}
 
+    try {
+        const employee = await Employee.findById(id).exec();
+        if (!employee) {
+            return res.status(404).json({ 'message': `Employee ID ${id} not found` });
+        }
+        res.json(employee);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
 
 const employeesController = {
     getAllEmployees,
@@ -71,4 +121,4 @@ const employeesController = {
     getEmployee
 };
 
-export default employeesController 
+export default employeesController;
