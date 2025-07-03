@@ -25,7 +25,7 @@ export const handleLogin = async (req, res) => {
         const accessToken = jwt.sign(
             { UserInfo: { username: foundUser.username, roles } },
             process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: '1h' }
+            { expiresIn: '10s' }
         );
 
         const refreshToken = jwt.sign(
@@ -46,9 +46,8 @@ export const handleLogin = async (req, res) => {
             secure: process.env.NODE_ENV === 'production' // Solo en producción
         });
 
-
-
         res.json({ user: foundUser.username, roles, accessToken });
+
     } catch (err) {
         console.error(err);
         return res.status(500).json({ message: 'Internal Server Error auth' });

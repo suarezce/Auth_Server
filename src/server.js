@@ -1,4 +1,3 @@
-// app de Athentication
 import 'dotenv/config.js';
 import express from 'express';
 import path from 'path';
@@ -45,10 +44,10 @@ const __dirname = path.dirname(__filename);
 const initializeDatabase = async () => {
   try {
     await connectDB();
-    
+
     // Crear roles después de conectar a la DB
     await createRoles();
-    
+
   } catch (error) {
     console.error('❌ Database initialization failed:', error);
     process.exit(1);
@@ -60,41 +59,45 @@ const setupMiddleware = () => {
   // Middleware personalizados
   app.use(logger);
   app.use(credentials); // Antes de CORS
-  
+
   // Configuración CORS
-  app.use(cors(corsOptions));   // 
-  
+  app.use(cors(corsOptions));
+
   // Parsers
   app.use(express.urlencoded({ extended: false }));
   app.use(express.json());
   app.use(cookieParser());
-  
+
   // Archivos estáticos
-  //console.log(path.join(__dirname, '../public'))
-  app.use(express.static(path.join(__dirname, '../views')));
+  app.use(express.static(path.join(__dirname, '../../Auth_APP/dist')));
 };
 
 // 3. Configuración de rutas
 const setupRoutes = () => {
+
+  app.get('/', (req, res) => {
+    console.log('Servidor funcionando en: http://localhost:20003');
+    res.sendFile(path.join(__dirname, '../../Auth_APP/dist', 'index.html'));
+  });
   // Rutas públicas
   app.use('/', rootRouter);
   app.use('/auth', authRouter);
   app.use('/refresh', refreshRouter);
   app.use('/logout', logoutRouter);
-  
+
   // Middleware de autenticación para rutas protegidas
   app.use(verifyJWT);
-  
+
   // Rutas protegidas
   app.use('/register', registerRouter);
   app.use('/employees', employersRouter);
   app.use('/users', usersRouter);
   app.use('/roles', rolesRouter);
-  
+
   // Manejo de rutas no encontradas (404)
   app.all('*', (req, res) => {
     res.status(404);
-    
+
     if (req.accepts('html')) {
       res.sendFile(path.join(__dirname, 'views', '404.html'));
     } else if (req.accepts('json')) {
@@ -103,7 +106,7 @@ const setupRoutes = () => {
       res.type('txt').send("404 Not Found");
     }
   });
-  
+
   // Middleware de manejo de errores
   app.use(errorHandler);
 };

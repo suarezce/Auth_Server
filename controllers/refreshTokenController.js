@@ -4,13 +4,14 @@ import jwt from 'jsonwebtoken';
 export const handleRefreshToken = async (req, res) => {
     const cookies = req.cookies;
 
-    console.log(`refreshToken JWT ${cookies.jwt}`)
+    // Mostrar el cookie como string JSON en la consola
+    console.log(`refreshToken JWT ${JSON.stringify(cookies)}`);
 
-    if (!cookies?.jwt) {
+    if (!cookies?.refreshToken) {
         return res.status(401).json({ message: 'Sin autorización' });
     }
 
-    const refreshToken = cookies.jwt;
+    const refreshToken = cookies.refreshToken;
 
     try {
         const foundUser = await User.findOne({ refreshToken }).populate("roles");
@@ -37,8 +38,10 @@ export const handleRefreshToken = async (req, res) => {
                         }
                     },
                     process.env.ACCESS_TOKEN_SECRET,
-                    { expiresIn: '10m' }
+                    { expiresIn: '10s' }
                 );
+
+                console.log(`roles ${tokenRoles} accesToken ${accessToken}`)
 
                 res.json({ roles: tokenRoles, accessToken });
             }
