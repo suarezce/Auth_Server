@@ -1,4 +1,5 @@
 export const verifyRoles = (...allowedRoles) => {
+    
     return (req, res, next) => {
         // Verificar si el usuario tiene roles asignados
         if (!req?.roles) {

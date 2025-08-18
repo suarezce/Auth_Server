@@ -12,16 +12,18 @@ export const getAllRoles = async (req, res) => {
 };
 
 export const createRoles = async (req, res) => {
-    const { rol, descripcion, Admin, Editor, Consultor } = req.body;
+    const { Rol, descripcion, Admin, Editor, Consultor } = req.body;
+
+    console.log(req.body)
 
     // Validar que se hayan proporcionado los campos necesarios
-    if (!rol || !descripcion || Admin === undefined || Editor === undefined || Consultor === undefined) {
+    if (!Rol || !descripcion || Admin === undefined || Editor === undefined || Consultor === undefined) {
         return res.status(400).json({ "message": 'All fields are required' });
     }
 
     try {
         const newRole = new Roles({
-            Rol: rol,
+            Rol: Rol,
             descripcion: descripcion,
             Admin: Admin,
             Editor: Editor,

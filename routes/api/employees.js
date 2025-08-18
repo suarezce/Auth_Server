@@ -12,6 +12,6 @@ router.route('/')
 
 router.route('/:id')
     .get(verifyRoles('loginAdmin'), employeesController.getEmployee)
-    .patch(verifyRoles('loginAdmin'), employeesController.updateEmployee)
+    .patch(verifyRoles('loginAdmin', 'user'), employeesController.updateEmployee)
     .delete(verifyRoles('loginAdmin'), employeesController.deleteEmployee);
 export default router;

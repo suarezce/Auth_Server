@@ -11,6 +11,8 @@ export const handleLogin = async (req, res) => {
     try {
         const foundUser = await User.findOne({ username: user }).populate("roles");
 
+        console.log(foundUser)
+
         if (!foundUser) {
             return res.status(401).json({ message: 'Sin autorización' });
         }
@@ -25,7 +27,7 @@ export const handleLogin = async (req, res) => {
         const accessToken = jwt.sign(
             { UserInfo: { username: foundUser.username, roles } },
             process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: '10m' }
+            { expiresIn: '1m' }
         );
 
         const refreshToken = jwt.sign(

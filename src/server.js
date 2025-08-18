@@ -1,4 +1,4 @@
-import 'dotenv/config.js';
+import 'dotenv/config';
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -15,7 +15,6 @@ import { createRoles } from '../config/inicialSetup.js';
 import { logger } from '../middleware/logEvents.js';
 import { errorHandler } from '../middleware/errorHandler.js';
 import { verifyJWT } from '../middleware/verifyJWT.js';
-import { credentials } from '../middleware/credentials.js';
 
 // Routers
 import rootRouter from '../routes/root.js';
@@ -47,7 +46,6 @@ const initializeDatabase = async () => {
 
     // Crear roles después de conectar a la DB
     await createRoles();
-
   } catch (error) {
     console.error('❌ Database initialization failed:', error);
     process.exit(1);
@@ -58,7 +56,6 @@ const initializeDatabase = async () => {
 const setupMiddleware = () => {
   // Middleware personalizados
   app.use(logger);
-  app.use(credentials); // Antes de CORS
 
   // Configuración CORS
   app.use(cors(corsOptions));
@@ -74,11 +71,6 @@ const setupMiddleware = () => {
 
 // 3. Configuración de rutas
 const setupRoutes = () => {
-
-  app.get('/', (req, res) => {
-    console.log('Servidor funcionando en: http://localhost:20003');
-    res.sendFile(path.join(__dirname, '../../Auth_APP/dist', 'index.html'));
-  });
   // Rutas públicas
   app.use('/', rootRouter);
   app.use('/auth', authRouter);
@@ -97,7 +89,6 @@ const setupRoutes = () => {
   // Manejo de rutas no encontradas (404)
   app.all('*', (req, res) => {
     res.status(404);
-
     if (req.accepts('html')) {
       res.sendFile(path.join(__dirname, 'views', '404.html'));
     } else if (req.accepts('json')) {
@@ -114,7 +105,7 @@ const setupRoutes = () => {
 // 4. Iniciar servidor
 const startServer = () => {
   app.listen(PORT, HOST, () => {
-    console.log(`🚀 Server running on port ${HOST} ${PORT}`);
+    console.log(`🚀 Server running on port ${HOST}:${PORT}`);
     console.log(`🌐 Access at http://${HOST}:${PORT}`);
   });
 };

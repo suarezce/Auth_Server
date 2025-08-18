@@ -9,14 +9,14 @@ export const createRoles = async () => {
 
         // Crear roles básicos
         const rolesData = [
-            { Rol: "user", Admin: 1500, Editor: 2500, Consultor: 3500 },
-            { Rol: "superAdmin", Admin: 1500, Editor: 2500, Consultor: 3500 },
-            { Rol: "masterAdmin", Admin: 1500, Editor: 2500, Consultor: 3500 },
-            { Rol: "contratacion", Admin: 1500, Editor: 2500, Consultor: 3500 },
-            { Rol: "administrador", Admin: 1500, Editor: 2500, Consultor: 3500 },
-            { Rol: "verificador", Admin: 1500, Editor: 2500, Consultor: 3500 },
-            { Rol: "aprobador", Admin: 1500, Editor: 2500, Consultor: 3500 },
-            { Rol: "loginAdmin", Admin: 1500, Editor: 2500, Consultor: 3500 }
+            { Rol: "user", Admin: 1, Editor: 1, Consultor: 1 },
+            { Rol: "superAdmin", Admin: 1, Editor: 1, Consultor: 1 },
+            { Rol: "masterAdmin", Admin: 1, Editor: 1, Consultor: 1 },
+            { Rol: "contratacion", Admin: 1, Editor: 1, Consultor: 1 },
+            { Rol: "administrador", Admin: 1, Editor: 1, Consultor: 1 },
+            { Rol: "verificador", Admin: 1, Editor: 1, Consultor: 1 },
+            { Rol: "aprobador", Admin: 1, Editor: 1, Consultor: 1 },
+            { Rol: "loginAdmin", Admin: 1, Editor: 1, Consultor: 1 }
         ];
 
         const roles = await Promise.all(rolesData.map(roleData => new Roles(roleData).save()));
@@ -28,13 +28,13 @@ export const createRoles = async () => {
 
         // Crear superusuario
         const superUser = new Users({
-            username: "superAdmin",
+            username: "Admin",
             password: await Users.encriptPassword("10953822"),
             roles: allRoles
         });
 
         await superUser.save();
-        console.log('✅ Superuser creado');
+        console.log('✅ Admin creado');
 
     } catch (error) {
         console.error('❌ Error creando roles iniciales y superuser:', error);
