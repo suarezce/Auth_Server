@@ -29,7 +29,7 @@ import rolesRouter from '../routes/api/roles.js';
 // Configuración inicial
 const app = express();
 const PORT = process.env.AUTH_PORT || 3800;
-const HOST = process.env.AUTH_HOST || 'localhost';
+const HOST = process.env.AUTH_HOST || '192.168.1.118';
 
 // Obtener __dirname en módulos ES
 const __filename = fileURLToPath(import.meta.url);

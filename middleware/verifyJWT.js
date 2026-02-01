@@ -6,7 +6,7 @@ export const verifyJWT = (req, res, next) => {
 
     // 1. Obtener el encabezado de autorización
     const authHeader = req.headers.authorization || req.headers.Authorization;
-    console.log('authHeader :', authHeader);
+ //   console.log('authHeader :', authHeader);
 
     // 2. Verificar si el encabezado de autorización está presente y comienza con 'Bearer '
     if (!authHeader?.startsWith('Bearer ')) {
@@ -40,7 +40,7 @@ export const verifyJWT = (req, res, next) => {
         req.user = decoded.UserInfo.username;
         req.roles = decoded.UserInfo.roles;
 
-        console.log('Usuario autenticado:', req.user, 'Roles:', req.roles);
+    //    console.log('Usuario autenticado:', req.user, 'Roles:', req.roles);
 
         // 7. Continuar con el siguiente middleware
         next();

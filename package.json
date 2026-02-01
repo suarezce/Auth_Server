@@ -5,11 +5,7 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-  "build": "babel src --out-dir build && npm run copy-views && npm run copy-env && npm run copy-public && npm run copy-config",
-  "copy-views": "xcopy /E /I views build\\views",
-  "copy-env": "copy .env build\\.env",
-  "copy-public": "xcopy /E /I public build\\public",
-  "copy-config": "xcopy config build\\config /E /I",
+  "build": "babel src --out-dir build",
   "start": "node build/server.js",
   "dev": "nodemon --trace-deprecation src/server.js"
   },

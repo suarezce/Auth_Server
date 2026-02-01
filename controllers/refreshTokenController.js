@@ -38,7 +38,7 @@ export const handleRefreshToken = async (req, res) => {
                         }
                     },
                     process.env.ACCESS_TOKEN_SECRET,
-                    { expiresIn: '1m' }
+                    { expiresIn: '1h' }
                 );
 
                 console.log(`roles ${tokenRoles} accesToken ${accessToken}`)
