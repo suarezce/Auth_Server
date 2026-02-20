@@ -26,11 +26,11 @@ export const verifyJWT = (req, res, next) => {
     // 5. Verificar el token
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
         if (err) {
-            console.error('Error al verificar el token:', err);
+            console.error('Error al verificar el token:', err.name);
             if (err.name === 'TokenExpiredError') {
                 return res.status(401).json({ error: 'Sin Autorización: Token expirado' });
             } else if (err.name === 'JsonWebTokenError') {
-                return res.status(401).json({ error: 'Sin Autorización: Token inválido' });
+                return res.status(401).json({ error: `Sin Autorización: Token inválido ${token}` });
             } else {
                 return res.status(401).json({ error: 'Sin Autorización: Fallo en la verificación del token' });
             }

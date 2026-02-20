@@ -16,7 +16,13 @@ export const createRoles = async () => {
             { Rol: "administrador", Admin: 1, Editor: 1, Consultor: 1 },
             { Rol: "verificador", Admin: 1, Editor: 1, Consultor: 1 },
             { Rol: "aprobador", Admin: 1, Editor: 1, Consultor: 1 },
-            { Rol: "loginAdmin", Admin: 1, Editor: 1, Consultor: 1 }
+            { Rol: "loginAdmin", Admin: 1, Editor: 1, Consultor: 1 },
+            // ===== ROLES DE PRUEBA PARA TESTING =====
+            { Rol: "adminCompleto", Admin: 1, Editor: 1, Consultor: 1 },
+            { Rol: "lectorAdmin", Admin: 1, Editor: 1, Consultor: 1 },
+            { Rol: "editorAdmin", Admin: 1, Editor: 1, Consultor: 1 },
+            { Rol: "gestorInventario", Admin: 1, Editor: 1, Consultor: 1 },
+            { Rol: "gestorOrdenes", Admin: 1, Editor: 1, Consultor: 1 }
         ];
 
         const roles = await Promise.all(rolesData.map(roleData => new Roles(roleData).save()));

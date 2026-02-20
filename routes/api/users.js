@@ -5,7 +5,7 @@ import { verifyRoles } from '../../middleware/verifyRoles.js';
 
 // Rutas para obtener todos los usuarios y eliminar un usuario por ID
 router.route('/')
-    .get(verifyRoles('loginAdmin'), usersController.getAllUsers)
+    .get(verifyRoles('loginAdmin', 'masterAdmin', 'user'), usersController.getAllUsers)
 
 
 // Rutas para obtener un usuario por ID y actualizar un usuario por ID

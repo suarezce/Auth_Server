@@ -27,7 +27,7 @@ export const handleRefreshToken = async (req, res) => {
             process.env.REFRESH_TOKEN_SECRET,
             (err, decoded) => {
                 if (err || foundUser.username !== decoded.username) {
-                    return res.status(403).json({ message: 'No autenticado' });
+                    return res.status(403).json({ message: 'No autenticado', err });
                 }
 
                 const accessToken = jwt.sign(
@@ -38,7 +38,7 @@ export const handleRefreshToken = async (req, res) => {
                         }
                     },
                     process.env.ACCESS_TOKEN_SECRET,
-                    { expiresIn: '1h' }
+                    { expiresIn: '1m' }
                 );
 
                 console.log(`roles ${tokenRoles} accesToken ${accessToken}`)

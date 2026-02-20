@@ -27,13 +27,13 @@ export const handleLogin = async (req, res) => {
         const accessToken = jwt.sign(
             { UserInfo: { username: foundUser.username, roles } },
             process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: '1h' }
+            { expiresIn: '10m' }
         );
 
         const refreshToken = jwt.sign(
             { username: foundUser.username },
             process.env.REFRESH_TOKEN_SECRET,
-            { expiresIn: '1d' }
+            { expiresIn: '4h' }
         );
 
         foundUser.refreshToken = refreshToken;
@@ -44,7 +44,7 @@ export const handleLogin = async (req, res) => {
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
             sameSite: 'Lax',
-            maxAge: 24 * 60 * 60 * 1000 ,
+            maxAge: 4 * 60 * 60 * 1000 , // 4 horas
             secure: process.env.NODE_ENV === 'production' // Solo en producción
         });
 
