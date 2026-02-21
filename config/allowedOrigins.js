@@ -1,16 +1,26 @@
-import 'dotenv/config.js'
+import "dotenv/config.js";
+import config from './config.js';
 
+const ports = [20000,20001,20002,20003,20004,20005];
+let origins = [];
 
-export const allowedOrigins = [
-    `https://www.yoursite.com`,
-    `http://${process.env.AUTH_HOST}:20000`,
-    `http://${process.env.AUTH_HOST}:20001`,
-    `http://${process.env.AUTH_HOST}:20003`,
-    `http://${process.env.AUTH_HOST}:20002`,
-    `http://192.168.1.19:20000`,
-    `http://192.168.1.19:20002`,
-    `http://192.168.1.19:20001`,
-    `http://192.168.1.19:20003`,
-    `http://localhost:5173`
+if (config.MODE_ENV === 'development' || config.MODE_ENV === 'enviroment') {
+  origins.push('*');
+} else {
+  const hosts = [
+    config.HOST,
+    config.HOST_PRIVATE,
+    config.HOST_PUBLIC,
+    'localhost',
+    config.HOST_CLIENTE,
+  ].filter(Boolean);
 
-];
+  hosts.forEach(h => {
+    ports.forEach(p => {
+      origins.push(`http://${h}:${p}`);
+    });
+  });
+  origins.unshift('https://www.yoursite.com');
+}
+
+export const allowedOrigins = origins;

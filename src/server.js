@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
 
 // Configuración
+import config from '../config/config.js';
 import { corsOptions } from '../config/corsOptions.js';
 import { connectDB } from '../config/dbConn.js';
 import { createRoles } from '../config/inicialSetup.js';
@@ -28,8 +29,8 @@ import rolesRouter from '../routes/api/roles.js';
 
 // Configuración inicial
 const app = express();
-const PORT = process.env.AUTH_PORT || 3800;
-const HOST = process.env.AUTH_HOST || '192.168.1.118';
+const PORT = config.PORT || process.env.AUTH_PORT || 3800;
+const HOST = config.HOST || process.env.AUTH_HOST || '192.168.1.118';
 
 // Obtener __dirname en módulos ES
 const __filename = fileURLToPath(import.meta.url);
